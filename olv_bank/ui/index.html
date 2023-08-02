@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfaz Bank</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-solid.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-regular.css.">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/sharp-light.css">
+</head>
+<body>
+    <div class="interfaz-bank" id="app">
+        <div class="container-bank":class="bankClass">
+            <nav class="categories">
+                <div class="title-nav">
+                    <img src="./assets/logo2.png">
+                </div>
+
+                <div class="container-categories">
+                    <div :class="'item-categories ' + (category == index ? 'selected' : '')" v-for="categories, index in nav" v-on:click="updateCategory(index)">
+                        <i :class="categories.icon"></i>
+                        <div class="item-title">{{categories.title}}</div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-info">
+                <header class="title-info">
+                    <div class="item-header">
+                        <i class="fa-duotone fa-location-dot"></i>
+                        <span>{{info.location}}</span>
+                    </div>
+                    <div class="item-header">
+                        <i class="fa-duotone fa-piggy-bank"></i>
+                        <span>{{info.bank}}$</span>
+                    </div>
+                    <div class="item-header">
+                        <i class="fa-duotone fa-wallet"></i>
+                        <span>{{info.money}} $</span>
+                    </div>
+                    <div class="item-header">
+                        <i class="fa-duotone fa-user"></i>
+                        <span>{{info.name}}</span>
+                    </div>
+                    <div class="item-header" v-on:click="closeBank">
+                        <i class="fa-duotone fa-right-to-bracket"></i>
+                    </div>
+                </header>
+
+                <div class="container-home containers" v-if="category == 0">
+                    <div class="container-cards">
+                        <div class="item-card" v-for="user, index in info.users">
+                            <div class="money-card">{{user.bank}}$</div>
+                            <div class="name-card">{{user.name}}</div>
+                            <div class="id-card"><i class="fa-duotone fa-key"></i>{{user.pin_code}}</div>
+                        </div>
+                    </div>
+
+                    <div class="container-buttons">
+                        <div :class="'button ' + (button_on == index ? 'button-selected' : '')" v-for="option, index in home_buttons" v-on:click="button_on = index">{{option.title}}</div>
+                    </div>
+
+                    <div class="container-functions">
+                        <div class="container-item-functions deposit" v-if="button_on === 0">
+                            <input placeholder="Cantidad..." type="number" v-model="fast_options.depositAmount">
+                            <div class="button-functions" v-on:click="deposit()">Depositar</div>
+                          </div>
+
+                          <div class="container-item-functions transfer" v-if="button_on === 1">
+                            <input placeholder="ID..." type="number" v-model="fast_options.transferId">
+                            <input placeholder="Mensaje..." type="text" v-model="fast_options.transferMessage">
+                            <input placeholder="Cantidad..." type="number" v-model="fast_options.transferAmount">
+                            <div class="button-functions" v-on:click="transfer()">Transferir</div>
+                          </div>
+
+                          <div class="container-item-functions withdraw" v-if="button_on === 2">
+                            <input placeholder="Cantidad..." type="number" v-model="fast_options.withdrawAmount">
+                            <div class="button-functions" v-on:click="withdraw()">Retirar</div>
+                          </div>
+
+                          <div class="container-item-functions withdraw" v-if="button_on === 3">
+                            <input placeholder="Max 4..." type="number" maxlength="5" v-model="fast_options.pin">
+                            <div class="button-functions" v-on:click="updatePin()">cambiar</div>
+                          </div>
+                    </div>
+                </div>
+
+                <div class="container-transactions containers" v-if="category == 1">
+                    <header class="title-transactions">transacciones recientes</header>
+
+                    <div class="container-items-transactions">
+                        <div class="item-transaction" v-for="transactions, index in info.transactions">
+                            <div :class="'item-type ' + (transactions.type == 'add' ? 'add_type' : 'remove_type')"><i :class="(transactions.type == 'add' ? 'fa-duotone fa-arrow-up-from-bracket' : 'fa-duotone fa-down-to-bracket')"></i></div>
+                            <div class="title-item">{{transactions.title}} : <span class="other-info">{{transactions.other_info}}</span></div>
+                            <div class="amount-info">{{transactions.amount}}$</div>
+                            <div class="date-item"><i class="fa-duotone fa-calendar-days"></i>{{transactions.date}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-pin":class="pinClass">
+            <div class="title-pin">
+                <img src="./assets/logo2.png">
+            </div>
+
+            <input class="password" type="password" maxlength="5" placeholder="PIN" v-model="pin_code">
+
+            <div class="button-enter-pin" v-if="pin_code.length >= 1" v-on:click="enterPin">acceder</div>
+        </div>
+
+        <div class="container-dialog":class="dialogClass">
+            <header class="title-dialog">metodos de pago</header>
+
+            <div class="container-pay-methods">
+                <div class="item-method" v-for="(method, index) in dialog_options" :key="index" v-on:click="selectDialog(method.value)">
+                    <i :class="method.icon"></i>
+                    <div class="title-method">{{method.title}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="./js/main.js"></script>
+</body>
+</html>
