@@ -1,5 +1,9 @@
 # jav_bank
 
+IMPORTANTE:
+
+Solo compatible con multicharacter, no funcionara sin el, si saben hacerlo bien por vosotros, besitos
+
 Preview : 
 
 ![image](https://github.com/JaviGnlzzz/jav_bank/assets/98654716/e7aef1a2-b8d1-4313-8e39-1d3f41c8fa6d)
