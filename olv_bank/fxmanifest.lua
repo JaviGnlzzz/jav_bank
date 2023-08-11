@@ -4,7 +4,7 @@ games { 'gta5' }
 
 author 'Javi'
 
-description 'Conce by Javi'
+description 'Bank by Javi'
 
 ui_page 'ui/index.html'
 
